@@ -1,5 +1,4 @@
 window.onload = function () {
-  console.log(getRows().length);
   var boxes = document.getElementsByTagName('td');
   for(var i = 0; i < boxes.length; i++){
     boxes[i].observe("click", changecolor);
@@ -9,11 +8,8 @@ window.onload = function () {
 function getRows() {
   return document.getElementsByTagName('tr');
 }
-
 function getRowCells(row) {
-  var rows = getRows();
-  var selectRow = rows[row];
-  return selectRow.length;
+  return (getRows())[row].getElementsByTagName('td');
 }
 function changecolor (event){
   box = event.element();
@@ -47,36 +43,44 @@ function changecolor (event){
      default: break;
    }
  }
- function validcolumn(char, col){
+ function validcolumn(num, col){
    var rows = getRows();
    for(var row in rows){
      var cells = row.getElementsByTagName('td')
-     if(char == cells[col].innerHTML){
+     if(num == cells[col].innerHTML){
        return false;
      }
    }
    return true;
  }
- function validrow(char, row){
+ function validrow(num, row){
    var rows = getRows();
    var cols = rows[row].getElementsByTagName('td');
    for(var col in cols) {
-     if(char == col.innerHTML){
+     if(num == col.innerHTML){
        return false;
      }
    }
    return true;
  }
- function validbox(char, row, col){
+ function validbox(num, row, col){
    var boxLength = Math.sqrt((getRows()).length);
    var boxRow = Math.floor(row / boxLength);
    var boxColumn = Math.floor(col / boxLength);
+   var topRow = boxRow * boxLength;
+   var leftColumn = boxColumn * boxLength;
+
    for(var i = 0; i < boxLength; i++){
+     var currentRow = getRowCells(topRow + i;);
      for(var j = 0; j < boxLength; j++) {
+       if(num == currentRow[leftColumn + j]){
+         return false;
+       }
      }
    }
-   return false;
+   return true;
  }
+
  function solveboard(){
    var row = document.getElementsByTagName('tr');
  }
