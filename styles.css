@@ -1,0 +1,29 @@
+  body {
+    background-image: url(images/background.jpg);
+  }
+  table {
+    margin: auto;
+    background-color: black;
+    border: 1px solid black;
+  }
+  td, .box {
+    background-color: white;
+    border: 1px black;
+    width: 2em;
+    min-width: 1em;
+    height: 2em;
+    font-size: 2em;
+    font-family: 'Rubik', sans-serif;
+    text-align: center;
+    outline: none;
+  }
+  button {
+    width: 90px;
+    float: center;
+    margin: auto;
+    text-align: center;
+  }
+
+  #solve {
+    text-align: center;
+  }
