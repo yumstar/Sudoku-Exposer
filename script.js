@@ -4,12 +4,16 @@ window.onload = function () {
     boxes[i].observe("click", changecolor);
     boxes[i].observe("keypress", insertnumber)
   }
+  var solveButton = document.getElementById('solve');
+  solveButton.observe("click", solution);
 }
 function getRows() {
   return document.getElementsByTagName('tr');
 }
 function getRowCells(row) {
-  return (getRows())[row].getElementsByTagName('td');
+  var rows = getRows();
+  var selectRow = rows[row];
+  return selectRow.getElementsByTagName('td');
 }
 function changecolor (event){
   box = event.element();
@@ -29,7 +33,6 @@ function changecolor (event){
  function revertcolor(element){
    element.style.backgroundColor = "white";
  }
-
  function insertnumber(event){
    var unikey = event.charCode || event.keyCode;
    var key = String.fromCharCode(unikey);
@@ -43,7 +46,7 @@ function changecolor (event){
      default: break;
    }
  }
- function validcolumn(num, col){
+ function validColumn(col, num){
    var rows = getRows();
    for(var row in rows){
      var cells = row.getElementsByTagName('td')
@@ -53,7 +56,7 @@ function changecolor (event){
    }
    return true;
  }
- function validrow(num, row){
+ function validRow(row, num){
    var rows = getRows();
    var cols = rows[row].getElementsByTagName('td');
    for(var col in cols) {
@@ -63,7 +66,7 @@ function changecolor (event){
    }
    return true;
  }
- function validbox(num, row, col){
+ function validBox(row, col, num){
    var boxLength = Math.sqrt((getRows()).length);
    var boxRow = Math.floor(row / boxLength);
    var boxColumn = Math.floor(col / boxLength);
@@ -71,16 +74,47 @@ function changecolor (event){
    var leftColumn = boxColumn * boxLength;
 
    for(var i = 0; i < boxLength; i++){
-     var currentRow = getRowCells(topRow + i;);
+     var currentRow = getRowCells(topRow + i);
      for(var j = 0; j < boxLength; j++) {
-       if(num == currentRow[leftColumn + j]){
+       if(num == currentRow[leftColumn + j].innerHTML){
          return false;
        }
      }
    }
    return true;
  }
+ function validPlacement(row, col, num){
+   return validRow(row, num) && validColumn(col, num) && validBox(row, col, num);
+ }
+ function solveCellsAfter(row, col){
+   if(col == getRowCells(row).length){
+     row++;
+     col = 0;
+     if(row == getRows().length){
+       return true;
+     }
+   }
 
- function solveboard(){
-   var row = document.getElementsByTagName('tr');
+   var cell = (getRowCells(row))[col];
+   var cellNum = parseInt(cell.innerHTML);
+
+   if(typeof(cellNum) == "number"){
+     return solveCellsAfter(row + 1, col)
+   }
+
+   for(var value = 1; value < getRowCells(0).length; value++){
+     if(validPlacement(row, col, value)){
+       cell.innerHTML =  value;
+       if(solveCellsAfter(row + 1, col)){
+         return true;
+       }
+     }
+   }
+
+   cell.innerHTML = "";
+   return false;
+ }
+
+ function solution(){
+   solveCellsAfter(0,0);
  }
