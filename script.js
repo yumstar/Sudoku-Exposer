@@ -5,7 +5,7 @@ window.onload = function () {
     boxes[i].observe("keypress", insertnumber)
   }
   var solveButton = document.getElementById('solve');
-  solveButton.observe("click", solution);
+  solveButton.observe("click", getSolution);
 }
 function getRows() {
   return document.getElementsByTagName('tr');
@@ -47,23 +47,35 @@ function changecolor (event){
    }
  }
  function validColumn(col, num){
-   var rows = getRows();
-   for(var row in rows){
-     var cells = row.getElementsByTagName('td')
+   for(var row = 0;  row < (getRows()).length; row++){
+     var cells = getRowCells(row);
      if(num == cells[col].innerHTML){
        return false;
      }
    }
+   // var rows = getRows();
+   // for(var row in rows){
+   //   var cells = row.getElementsByTagName('td');
+   //   if(num == cells[col].innerHTML){
+   //     return false;
+   //   }
+   // }
    return true;
  }
  function validRow(row, num){
-   var rows = getRows();
-   var cols = rows[row].getElementsByTagName('td');
-   for(var col in cols) {
-     if(num == col.innerHTML){
+   var cols = getRowCells(row);
+   for(var col = 0; col < cols.length; col++){
+     if(num == cols[col].innerHTML){
        return false;
      }
    }
+   // var rows = getRows();
+   // var cols = rows[row].getElementsByTagName('td');
+   // for(var col in cols) {
+   //   if(num == col.innerHTML){
+   //     return false;
+   //   }
+   // }
    return true;
  }
  function validBox(row, col, num){
@@ -83,27 +95,37 @@ function changecolor (event){
    }
    return true;
  }
+
  function validPlacement(row, col, num){
    return validRow(row, num) && validColumn(col, num) && validBox(row, col, num);
  }
+
  function solveCellsAfter(row, col){
-   if(col == getRowCells(row).length){
-     row++;
+   if(col == getRows().length){
+     console.log("row: ", row, " col: ", col);
+     console.log("end reached");
      col = 0;
-     if(row == getRows().length){
+     row++;
+     if(row == getRowCells(0).length){
+       console.log("yes");
        return true;
      }
    }
-
    var cell = (getRowCells(row))[col];
    var cellNum = parseInt(cell.innerHTML);
 
-   if(typeof(cellNum) == "number"){
-     return solveCellsAfter(row + 1, col)
+   if(!isNaN(cellNum)){
+     console.log("row: ", row, " col: ", col);
+     console.log(cellNum);
+     console.log("skip");
+     return solveCellsAfter(row, col + 1);
    }
 
-   for(var value = 1; value < getRowCells(0).length; value++){
+   for(var value = 1; value <= getRows().length; value++){;
      if(validPlacement(row, col, value)){
+       console.log("row: ", row, " col: ", col);
+       console.log(value);
+       console.log("valid placement");
        cell.innerHTML =  value;
        if(solveCellsAfter(row + 1, col)){
          return true;
@@ -115,6 +137,8 @@ function changecolor (event){
    return false;
  }
 
- function solution(){
-   solveCellsAfter(0,0);
+ function getSolution(){
+  if(solveCellsAfter(0,0)) {
+    this.innerHTML = "Solved!"
+  };
  }
