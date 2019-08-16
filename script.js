@@ -127,7 +127,7 @@ function changecolor (event){
        console.log(value);
        console.log("valid placement");
        cell.innerHTML =  value;
-       if(solveCellsAfter(row + 1, col)){
+       if(solveCellsAfter(row, col + 1)){
          return true;
        }
      }
