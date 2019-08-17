@@ -6,7 +6,7 @@ window.onload = function() {
   var clearButton = document.getElementById('clear');
   for (var i = 0; i < cells.length; i++) {
     cells[i].observe("click", changecolor);
-    cells[i].observe("keypress", insertnumber)
+    cells[i].observe("keydown", insertnumber)
     cells[i].observe("focus", changecolor);
     cells[i].observe("blur", changecolor);
   }
@@ -35,15 +35,15 @@ function changecolor(event) {
       solved = false;
       clearBoard();
     }
-    this.observe("keypress", insertnumber);
+    this.observe("keydown", insertnumber);
     this.style.backgroundColor = "#ADD8E6";
     this.observe("mouseout", changecolor);
   }
   else if (event.type == "mouseout" || event.type == "blur") {
     this.stopObserving("mouseout", changecolor);
-    this.stopObserving("keypress", insertnumber);
+    this.stopObserving("keydown", insertnumber);
     this.style.backgroundColor = "#B7E2F0";
-    setTimeout(revertcolor, 200, this);
+    setTimeout(revertcolor, 100, this);
   }
 }
 
@@ -52,12 +52,12 @@ function revertcolor(element) {
 }
 
 function insertnumber(event) {
-  var unikey = event.charCode || event.keyCode;
-  var key = String.fromCharCode(unikey);
+  // var unikey = event.charCode || event.keyCode;
+  var key = event.key;
   console.log(key);
   switch (key) {
     case "1": case "2": case "3": case "4": case "5":
-    case "6": case "7": case "8": case "9": case "Backspace":
+    case "6": case "7": case "8": case "9":
       // if (this.innerHTML != key) {
         this.innerHTML = key;
         var cells = getAllCells();
@@ -67,29 +67,31 @@ function insertnumber(event) {
             nextCell.focus();
           }
         }
+        break;
         //this.stopObserving("keypress", insertnumber);
       // }
-    case "w": case "a": case "s": case "d":
+    case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
+    case "w": case "s": case "a": case "d":
       for (var j = 0; j < getRows().length; j++) {
         var currentRow = getRowCells(j);
         for (var k = 0; k < currentRow.length; k++) {
           if (this == currentRow[k]) {
             switch (key) {
-              case "w":
+              case "ArrowUp": case "w":
                 var prevRowCells = getRowCells(mod(j - 1, getRows().length));
                 var cellAbove = prevRowCells[k];
                 cellAbove.focus();
                 break;
-              case "s":
+              case "ArrowDown": case "s":
                 var nextRowCells = getRowCells(mod(j + 1, getRows().length));
                 var cellBelow = nextRowCells[k];
                 cellBelow.focus();
                 break;
-              case "a":
+              case "ArrowLeft": case "a":
                 var leftCell = currentRow[mod(k - 1, getRowCells(j).length)];
                 leftCell.focus();
                 break;
-              case "d":
+              case "ArrowRight": case "d":
                 var rightCell = currentRow[mod(k + 1, getRowCells(j).length)];
                 rightCell.focus();
                 break;
@@ -97,6 +99,8 @@ function insertnumber(event) {
           }
         }
       }
+      break;
+    case "Backspace": this.innerHTML = ""; break;
     default: break;
   }
 }
@@ -196,4 +200,13 @@ function getSolution() {
 
 function mod(a, b) {
   return (a + b) % b;
+}
+
+function getCellIndex(cell, arr){
+  for(var i = 0; i < arr.length; i++){
+    if(cell == arr[i]){
+      return i;
+    }
+  }
+  return -1;
 }
