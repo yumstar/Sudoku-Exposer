@@ -1,5 +1,5 @@
   body {
-    background-image: url(images/background.jpg);
+    background-image: url(images/background.png);
   }
   table {
     margin: auto;
@@ -15,12 +15,10 @@
     font-size: 2em;
     font-family: 'Rubik', sans-serif;
     text-align: center;
-    outline: none;
   }
   button {
     width: 90px;
     float: center;
-    margin: auto;
     text-align: center;
   }
 
