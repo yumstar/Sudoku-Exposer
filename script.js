@@ -7,6 +7,8 @@ window.onload = function() {
   for (var i = 0; i < cells.length; i++) {
     cells[i].observe("click", changecolor);
     cells[i].observe("keypress", insertnumber)
+    cells[i].observe("focus", changecolor);
+    cells[i].observe("blur", changecolor);
   }
   solveButton.observe("click", getSolution);
   clearButton.observe("click", clearBoard);
@@ -28,7 +30,7 @@ function getAllCells() {
 
 function changecolor(event) {
   box = event.element();
-  if (event.type == "click") {
+  if (event.type == "click" || event.type == "focus") {
     if (solved) {
       solved = false;
       clearBoard();
@@ -37,11 +39,11 @@ function changecolor(event) {
     this.style.backgroundColor = "#ADD8E6";
     this.observe("mouseout", changecolor);
   }
-  else if (event.type == "mouseout") {
+  else if (event.type == "mouseout" || event.type == "blur") {
     this.stopObserving("mouseout", changecolor);
     this.stopObserving("keypress", insertnumber);
     this.style.backgroundColor = "#B7E2F0";
-    setTimeout(revertcolor, 500, this);
+    setTimeout(revertcolor, 200, this);
   }
 }
 
@@ -52,35 +54,43 @@ function revertcolor(element) {
 function insertnumber(event) {
   var unikey = event.charCode || event.keyCode;
   var key = String.fromCharCode(unikey);
+  console.log(key);
   switch (key) {
     case "1": case "2": case "3": case "4": case "5":
-    case "6": case "7": case "8": case "9": case "0":
-      if (this.innerHTML != key) {
+    case "6": case "7": case "8": case "9": case "Backspace":
+      // if (this.innerHTML != key) {
         this.innerHTML = key;
+        var cells = getAllCells();
+        for(var i = 0; i < cells.length - 1; i++){
+          if(this == cells[i]){
+            var nextCell = cells[i + 1];
+            nextCell.focus();
+          }
+        }
         //this.stopObserving("keypress", insertnumber);
-      }
+      // }
     case "w": case "a": case "s": case "d":
-      for (var i = 0; i < getRows().length; i++) {
-        var currentRow = getRowCells(i);
-        for (var j = 0; j < getRowCells(i).length; j++) {
-          if (this == currentRow[j]) {
+      for (var j = 0; j < getRows().length; j++) {
+        var currentRow = getRowCells(j);
+        for (var k = 0; k < currentRow.length; k++) {
+          if (this == currentRow[k]) {
             switch (key) {
               case "w":
-                var prevRowCells = getRowCells(mod(i - 1, getRows().length));
-                var cellAbove = prevRowCells[j];
+                var prevRowCells = getRowCells(mod(j - 1, getRows().length));
+                var cellAbove = prevRowCells[k];
                 cellAbove.focus();
                 break;
               case "s":
-                var nextRowCells = getRowCells(mod(i + 1, getRows().length));
-                var cellBelow = nextRowCells[j];
+                var nextRowCells = getRowCells(mod(j + 1, getRows().length));
+                var cellBelow = nextRowCells[k];
                 cellBelow.focus();
                 break;
               case "a":
-                var leftCell = currentRow[mod(j - 1, getRowCells(i).length)];
+                var leftCell = currentRow[mod(k - 1, getRowCells(j).length)];
                 leftCell.focus();
                 break;
               case "d":
-                var rightCell = currentRow[mod(j + 1, getRowCells(i).length)];
+                var rightCell = currentRow[mod(k + 1, getRowCells(j).length)];
                 rightCell.focus();
                 break;
             }
