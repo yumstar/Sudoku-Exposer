@@ -54,50 +54,63 @@ function revertcolor(element) {
 function insertnumber(event) {
   // var unikey = event.charCode || event.keyCode;
   var key = event.key;
-  console.log(key);
   switch (key) {
     case "1": case "2": case "3": case "4": case "5":
     case "6": case "7": case "8": case "9":
       // if (this.innerHTML != key) {
         this.innerHTML = key;
         var cells = getAllCells();
-        for(var i = 0; i < cells.length - 1; i++){
-          if(this == cells[i]){
-            var nextCell = cells[i + 1];
+        var index = getCellIndex(this, cells);
+        if(index >= 0){
+          if(index < cells.length - 1){
+            var nextCell = cells[index + 1];
             nextCell.focus();
           }
+          else {
+            this.blur();
+          }
         }
+        // for(var i = 0; i < cells.length - 1; i++){
+        //   if(this == cells[i]){
+        //     var nextCell = cells[i + 1];
+        //     nextCell.focus();
+        //   }
+        // }
         break;
         //this.stopObserving("keypress", insertnumber);
       // }
     case "ArrowUp": case "ArrowDown": case "ArrowLeft": case "ArrowRight":
     case "w": case "s": case "a": case "d":
-      for (var j = 0; j < getRows().length; j++) {
-        var currentRow = getRowCells(j);
-        for (var k = 0; k < currentRow.length; k++) {
-          if (this == currentRow[k]) {
+      for (var row = 0; row < getRows().length; row++) {
+        var currentRow = getRowCells(row);
+        var col = getCellIndex(this, currentRow);
+        if(col >= 0){
+        // for (var k = 0; k < currentRow.length; k++) {
+        //   if (this == currentRow[k]) {
             switch (key) {
               case "ArrowUp": case "w":
-                var prevRowCells = getRowCells(mod(j - 1, getRows().length));
-                var cellAbove = prevRowCells[k];
+                var prevRowCells = getRowCells(mod(row - 1, getRows().length));
+                var cellAbove = prevRowCells[col];
                 cellAbove.focus();
                 break;
               case "ArrowDown": case "s":
-                var nextRowCells = getRowCells(mod(j + 1, getRows().length));
-                var cellBelow = nextRowCells[k];
+                var nextRowCells = getRowCells(mod(row + 1, getRows().length));
+                var cellBelow = nextRowCells[col];
                 cellBelow.focus();
                 break;
               case "ArrowLeft": case "a":
-                var leftCell = currentRow[mod(k - 1, getRowCells(j).length)];
+                var leftCell = currentRow[mod(col - 1, getRowCells(row).length)];
                 leftCell.focus();
                 break;
               case "ArrowRight": case "d":
-                var rightCell = currentRow[mod(k + 1, getRowCells(j).length)];
+                var rightCell = currentRow[mod(col + 1, getRowCells(row).length)];
                 rightCell.focus();
                 break;
             }
+            break;
           }
-        }
+        //   }
+        // }
       }
       break;
     case "Backspace": this.innerHTML = ""; break;
