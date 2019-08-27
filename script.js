@@ -1,4 +1,5 @@
 var solved = false;
+const requiredNumOfValues = 17;
 
 window.onload = function() {
   var cells = getAllCells();
@@ -59,17 +60,17 @@ function insertnumber(event) {
     case "6": case "7": case "8": case "9":
       // if (this.innerHTML != key) {
         this.innerHTML = key;
-        var cells = getAllCells();
-        var index = getCellIndex(this, cells);
-        if(index >= 0){
-          if(index < cells.length - 1){
-            var nextCell = cells[index + 1];
-            nextCell.focus();
-          }
-          else {
-            this.blur();
-          }
-        }
+        // var cells = getAllCells();
+        // var index = getCellIndex(this, cells);
+        // if(index >= 0){
+        //   if(index < cells.length - 1){
+        //     var nextCell = cells[index + 1];
+        //     nextCell.focus();
+        //   }
+        //   else {
+        //     this.blur();
+        //   }
+        // }
         // for(var i = 0; i < cells.length - 1; i++){
         //   if(this == cells[i]){
         //     var nextCell = cells[i + 1];
@@ -205,10 +206,29 @@ function solveCellsAfter(row, col) {
 }
 
 function getSolution() {
-  if (solveCellsAfter(0, 0)) {
-    solved = true;
-    this.innerHTML = "Solved!"
+  if(enoughValues()){
+    if (solveCellsAfter(0, 0)) {
+      solved = true;
+      this.innerHTML = "Solved!"
+    }
   }
+}
+
+function enoughValues(){
+  var cells = getAllCells();
+  var numOfValues = 0;
+  for(var i = 0; i < cells.length; i++){
+    var cellNum = parseInt(cells[i].innerHTML);
+    if(!isNaN(cellNum)){
+      numOfValues++;
+    }
+    if(numOfValues >= requiredNumOfValues){
+      return true;
+    }
+  }
+  var message = document.getElementById('message');
+  message.innerHTML ="Error. The board does not contain enough given values.";
+  return false;
 }
 
 function mod(a, b) {
