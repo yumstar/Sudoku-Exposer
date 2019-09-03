@@ -19,10 +19,26 @@ function getRows() {
   return document.getElementsByTagName('tr');
 }
 
+
 function getRowCells(row) {
   var rows = getRows();
   var selectRow = rows[row];
   return selectRow.getElementsByTagName('td');
+}
+
+function getRowLength(row){
+  return (getRowCells(row)).length;
+}
+
+function getColumnCells(col){
+  var columnLength = getRows().length;
+  var cells = [];
+  for(var i = 0; i < columnLength; i++){
+    var row =  getRowCells(i);
+    cells[i] = row[col];
+  }
+  console.log(cells);
+  return cells;
 }
 
 function getAllCells() {
@@ -124,6 +140,10 @@ function clearBoard() {
   for (var i = 0; i < cells.length; i++) {
     cells[i].innerHTML = "";
   }
+  if(solved){
+    var solveButton = document.getElementById('solve');
+    solveButton.innerHTML = "Solve!";
+  }
 }
 
 function validColumn(col, num) {
@@ -178,7 +198,6 @@ function solveCellsAfter(row, col) {
       return true;
     }
   }
-
   var cell = (getRowCells(row))[col];
   var cellNum = parseInt(cell.innerHTML);
 
@@ -206,10 +225,14 @@ function solveCellsAfter(row, col) {
 }
 
 function getSolution() {
-  if(enoughValues()){
+  setMessage("");
+  if(enoughValues() && checkBoard()){
     if (solveCellsAfter(0, 0)) {
+      var message = document.getElementById('message');
       solved = true;
       this.innerHTML = "Solved!"
+      if(message.innerHTML.length > 0)
+      setMessage("");
     }
   }
 }
@@ -231,10 +254,120 @@ function enoughValues(){
   return false;
 }
 
+function checkBoard() {
+  console.log("checkBoard");
+    return checkRows() && checkColumns() && checkBoxes();
+  // var rowLength = getRowLength(0);
+  // for(var row = 0; row < rowLength; row++){
+  //   var rowNums = [];
+  //   var i = 0;
+  //   for(var col = 0; col < rowLength; col++){
+  //     var cell = (getRowCells(row))[col];
+  //     var cellNum = parseInt(cell.innerHTML);
+  //     if(!isNaN(cellNum)){
+  //       rowNums[i] = cellNum;
+  //       i++;
+  //     }
+  //   }
+  //   rowNums.sort(sortNums);
+  //   for(var j = 0; j < i - 1; j++){
+  //     if(rowNums[j] == rowNums[j + 1]){
+  //       var message = document.getElementById('message');
+  //       message.innerHTML = "Error: Non-valid board.";
+  //       return false;
+  //     }
+  //   }
+  // }
+  // return true;
+}
+
 function mod(a, b) {
   return (a + b) % b;
 }
 
+function containsDuplicates(set){
+  var i = 0;
+  var cellNums = [];
+  for(var j = 0; j < set.length; j++){
+    var cellNum = parseInt(set[j].innerHTML);
+    if(!isNaN(cellNum)){
+      cellNums[i] = cellNum;
+      i++;
+    }
+  }
+  cellNums.sort(sortNums);
+  for(var k = 0; k < i - 1; k++){
+    if(cellNums[k] == cellNums[k + 1]){
+      var message = document.getElementById('message');
+      message.innerHTML = "Error: Non-valid board.";
+      return false;
+    }
+  }
+}
+
+function checkRows(){
+  var rowLength = getRowCells(0).length;
+  var cells;
+  for(var row = 0; row < rowLength; row++){
+    cells = getRowCells(row);
+    if(containsDuplicates(cells)){
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkColumns(){
+  console.log("yes");
+  var columnLength = (getRows()).length;
+  var cells;
+  for(var col = 0; col < columnLength; col++){
+    cells = getColumnCells(col);
+    if(containsDuplicates(cells)){
+      return false;
+    }
+  }
+  return true;
+}
+
+function checkBoxes(){
+  var boxLength = Math.sqrt((getRows()).length);
+  for(var row = 0; row < boxLength; row++){
+    for(var col = 0; col < boxLength; col++){
+      var boxRow = Math.floor(row / boxLength);
+      var boxColumn = Math.floor(col / boxLength);
+      var topRow = boxRow * boxLength;
+      var leftColumn = boxColumn * boxLength;
+      var cells = [];
+      var i = 0;
+
+      for(var j = 0; j < boxLength; j++){
+        var currentRow = getRowCells(topRow + j);
+        for(var k = 0; k < boxLength; k++){
+          cells[i++] = currentRow[leftColumn + k];
+        }
+      }
+      if(containsDuplicates(cells)){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+// function parseCellNum(row, col){
+//   var cell = (getRowCells(row))[col];
+//   var cellNum = parseInt(cell.innerHTML);
+//   return cellNum;
+// }
+
+function sortNums(a, b){
+  return a-b;
+}
+
+function setMessage(message){
+  var messageLabel = document.getElementById('message');
+  messageLabel.innerHTML = message;
+}
 function getCellIndex(cell, arr){
   for(var i = 0; i < arr.length; i++){
     if(cell == arr[i]){
