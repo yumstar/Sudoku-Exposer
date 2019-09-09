@@ -331,27 +331,38 @@ function checkColumns(){
 }
 
 function checkBoxes(){
+  var boardLength = (getRows()).length
   var boxLength = Math.sqrt((getRows()).length);
-  for(var row = 0; row < boxLength; row++){
-    for(var col = 0; col < boxLength; col++){
+  for(var row = 0; row < boardLength; row += 3){
+    console.log("Row: " + row);
+    for(var col = 0; col < boardLength; col += 3){
+      console.log("Col: " + col);
       var boxRow = Math.floor(row / boxLength);
       var boxColumn = Math.floor(col / boxLength);
       var topRow = boxRow * boxLength;
       var leftColumn = boxColumn * boxLength;
+      console.log("(" + boxRow + " , " + boxColumn + ") " + "(" + topRow + " , " + leftColumn + ")");
       var cells = [];
       var i = 0;
 
       for(var j = 0; j < boxLength; j++){
         var currentRow = getRowCells(topRow + j);
+        console.log("current row: " +  (topRow + j));
         for(var k = 0; k < boxLength; k++){
           cells[i++] = currentRow[leftColumn + k];
+          console.log("current column: " + (leftColumn + j));
         }
+      }
+      console.log(cells);
+      for(var i = 0; i < cells.length; i++){
+        console.log(cells[i].innerHTML);
       }
       if(containsDuplicates(cells)){
         return false;
-      }
+
     }
   }
+}
   return true;
 }
 // function parseCellNum(row, col){
